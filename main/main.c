@@ -7,7 +7,6 @@
 #include "soc/gpio_struct.h"
 #include "driver/gpio.h"
 #include "lora.h"
-#include "LCDS.h"
 
 #define PMODCLS_CS_PIN 9
 uint8_t buf[50]={"buna\0"};

@@ -1080,3 +1080,10 @@
 1005	1078	1654459814396957750	.bin_timestamp	8a49da6b384ca2f7
 1078	1109	0	esp-idf/esptool_py/CMakeFiles/app_check_size	29db66f332283796
 1109	5896	0	esp-idf/esptool_py/CMakeFiles/app-flash	f717facc864a2df4
+9	67	1654461251213453410	esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj	950b112058d96e88
+67	72	1654461251221453481	esp-idf/main/libmain.a	42f064c55b51f744
+72	839	1654461251973460091	esp-idf/esp_system/ld/sections.ld	f938df7f58e7df47
+839	1006	1654461252153461673	library-test-receiver.elf	ab03b06dee42efa
+1006	1078	1654461252225462306	.bin_timestamp	8a49da6b384ca2f7
+1078	1102	0	esp-idf/esptool_py/CMakeFiles/app_check_size	29db66f332283796
+1102	5891	0	esp-idf/esptool_py/CMakeFiles/app-flash	f717facc864a2df4
