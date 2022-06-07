@@ -32,11 +32,6 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "TRUE")
 endif()
 
-# Set default install directory permissions.
-if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/home/razvan/.espressif/tools/riscv32-esp-elf/esp-2021r2-8.4.0/riscv32-esp-elf/bin/riscv32-esp-elf-objdump")
-endif()
-
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/mbedtls" TYPE FILE PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ FILES
     "/home/razvan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/aes.h"

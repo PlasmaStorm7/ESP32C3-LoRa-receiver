@@ -9,16 +9,15 @@
 #include "lora.h"
 
 #define PMODCLS_CS_PIN 9
-uint8_t buf[50]={"buna\0"};
+uint8_t buf[50]={"salut\0"};
 static spi_device_handle_t __spicls;
+bool msgReady;
 
 
 void PmodCls_Writestring(const char * p){
    
-   //char out[50]={0};
    uint8_t length =strlen(p);
    uint8_t in[50];
-   //uint8_t i=0;
    spi_transaction_t pmod = {
       .flags = 0,
       .length = 8 * length,
@@ -26,18 +25,11 @@ void PmodCls_Writestring(const char * p){
       .rx_buffer = in  
    };
    //printf("trimit %s spre display\n",p);
-   //Ultimul element dintr-un sir e 0
-   //while(p[i])//Verificam, daca nu e ultimul element
-   //{
-      //out[0]=p[i];
-      //printf("sending %c to display\n",out[0]);
-      if(spi_device_transmit(__spicls, &pmod) != ESP_OK)
-      {
-         printf("SPI WRITE ERROR!\n");
-         return ;
-      }
-      //i++;
-   //}
+   if(spi_device_transmit(__spicls, &pmod) != ESP_OK)
+   {
+      printf("SPI WRITE ERROR!\n");
+      return ;
+   }
 }
 
 void clearScreen()
@@ -51,7 +43,6 @@ void HelloWorld()
 {
    //Folosim secvente Escape: \e[Linie;ColoanaH    
    PmodCls_Writestring("\e[0;1HPMOD CLS DEMO \e[1;2HHello World");
-   //PmodCls_Writestring("B");
    //printf("wrote hello world\n");
 }
 
@@ -72,23 +63,28 @@ void init_display()
    retCLS = spi_bus_add_device(SPI2_HOST, &pmodCLS, &__spicls);
    assert(retCLS == ESP_OK);
    PmodCls_Writestring("\e[0*");
-   vTaskDelay(50);
    //enable display and backlight(doesn't seem to work)
    PmodCls_Writestring("\e[3e");
-   vTaskDelay(50);
    //disable cursor
    PmodCls_Writestring("\e[0c");
-   vTaskDelay(50);
+
 }
 
 void task_displayMsg(void *p)
 {
    init_display();
+   clearScreen();
+   //HelloWorld();
+   PmodCls_Writestring((char*)buf);//initial mesajul e "salut"
    for(;;){
       vTaskDelay(20);
-      clearScreen();
-      PmodCls_Writestring((char*)buf);
-      //printf("wrote message to display");
+      if(msgReady)
+      {
+         clearScreen();
+         PmodCls_Writestring((char*)buf);
+         //printf("wrote message to display");
+         msgReady=false;
+      }
    }
    vTaskDelete(NULL);
 }
@@ -96,51 +92,36 @@ void task_displayMsg(void *p)
 void task_rx(void *p)
 {
    int x;
+   
    for(;;) {
-      lora_receive();    // put into receive mode
+      //lora_receive();// put into receive mode
       while(isRxDone()) {
          x = lora_receive_packet(buf, sizeof(buf));
          resetRxDone();
          if(x==0){
             printf("CRC Error with %.2f SNR and %d RSSI\n",lora_packet_snr(),lora_packet_rssi());
+            lora_receive();
             break;
          }
-         buf[x] = 0;
-         printf("Received: \"%s\" with %.2f SNR and %d RSSI\n", buf,lora_packet_snr(),lora_packet_rssi());
+         msgReady=true;
+         buf[x] = 0;//string terminator
+         //printf("Received: \"%s\" with %.2f SNR and %d RSSI\n", buf,lora_packet_snr(),lora_packet_rssi());
+         //printf("Received: \"%s\" \n",buf);
          lora_receive();
       }
-      //xTaskCreate(&task_displayMsg,"task_displayMsg",2048,NULL,5,NULL);
-      //vTaskDelete(task_displayHandle);
-      vTaskDelay(1);
-   }
-   vTaskDelete(NULL);
-}
-
-void task_display(void *p)
-{
-   init_display();
-   vTaskDelay(pdMS_TO_TICKS(1000));
-   for(;;){
-      clearScreen();
-      HelloWorld();
-      vTaskDelay(pdMS_TO_TICKS(6000));
-      clearScreen();
-      PmodCls_Writestring((char*)buf);      
-      printf("wrote message to display\n");
-      vTaskDelay(pdMS_TO_TICKS(6000));
+      vTaskDelay(10);
    }
    vTaskDelete(NULL);
 }
 
 void app_main()
 {
-   
    lora_init();
-   lora_set_frequency(8683e5);
+   lora_set_frequency(8683e5);//868.3Mhz, bandwidth 125Khz ,banda libera up to 1% duty cycle
    lora_enable_crc();
-   
+   lora_receive();
    xTaskCreate(&task_rx, "task_rx", 2048, NULL, 5, NULL);
-   xTaskCreate(&task_displayMsg,"task_displayMsg",2048,NULL,4,NULL);
+   xTaskCreate(&task_displayMsg,"task_displayMsg",2048,NULL,6,NULL);
 }
 
 

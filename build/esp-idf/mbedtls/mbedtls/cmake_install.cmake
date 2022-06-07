@@ -32,15 +32,10 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "TRUE")
 endif()
 
-# Set default install directory permissions.
-if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/home/razvan/.espressif/tools/riscv32-esp-elf/esp-2021r2-8.4.0/riscv32-esp-elf/bin/riscv32-esp-elf-objdump")
-endif()
-
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/razvan/Coding/EspProjects/esp-lora/library-test-receiver/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
-  include("/home/razvan/Coding/EspProjects/esp-lora/library-test-receiver/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
+  include("/home/razvan/Coding/EspProjects/SMP-receiver/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
+  include("/home/razvan/Coding/EspProjects/SMP-receiver/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
 
 endif()
 

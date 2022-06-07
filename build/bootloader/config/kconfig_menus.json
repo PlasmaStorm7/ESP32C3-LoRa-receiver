@@ -907,16 +907,6 @@
                 "type": "string"
             },
             {
-                "children": [],
-                "depends_on": "SECURE_BOOT && (IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32S3)",
-                "help": "If this option is set, ROM bootloader will revoke the public key digest burned in efuse block\nif it fails to verify the signature of software bootloader with it.\nRevocation of keys does not happen when enabling secure boot. Once secure boot is enabled,\nkey revocation checks will be done on subsequent boot-up, while verifying the software bootloader\n\nThis feature provides a strong resistance against physical attacks on the device.\n\nNOTE: Once a digest slot is revoked, it can never be used again to verify an image\nThis can lead to permanent bricking of the device, in case all keys are revoked\nbecause of signature verification failure.",
-                "id": "SECURE_BOOT_ENABLE_AGGRESSIVE_KEY_REVOKE",
-                "name": "SECURE_BOOT_ENABLE_AGGRESSIVE_KEY_REVOKE",
-                "range": null,
-                "title": "Enable Aggressive key revoke strategy",
-                "type": "bool"
-            },
-            {
                 "children": [
                     {
                         "children": [],
@@ -1465,7 +1455,7 @@
                 "children": [
                     {
                         "children": [],
-                        "depends_on": "IDF_TARGET_ESP32S3 && ESPTOOLPY_FLASH_SAMPLE_MODE_STR && <choice ESPTOOLPY_FLASHFREQ>",
+                        "depends_on": "ESPTOOLPY_FLASH_SAMPLE_MODE_STR && <choice ESPTOOLPY_FLASHFREQ>",
                         "help": null,
                         "id": "ESPTOOLPY_FLASHFREQ_120M",
                         "name": "ESPTOOLPY_FLASHFREQ_120M",
@@ -2162,16 +2152,6 @@
             },
             {
                 "children": [],
-                "depends_on": "IDF_TARGET_ARCH_RISCV",
-                "help": "Adds -msave-restore to C/C++ compilation flags.\n\nWhen this flag is enabled, compiler will call library functions to\nsave/restore registers in function prologues/epilogues. This results\nin lower overall code size, at the expense of slightly reduced performance.\n\nThis option can be enabled for RISC-V targets only.",
-                "id": "COMPILER_SAVE_RESTORE_LIBCALLS",
-                "name": "COMPILER_SAVE_RESTORE_LIBCALLS",
-                "range": null,
-                "title": "Enable -msave-restore flag to reduce code size",
-                "type": "bool"
-            },
-            {
-                "children": [],
                 "depends_on": null,
                 "help": "Enable this option if using GCC 6 or newer, and wanting to disable warnings which don't appear with\nGCC 5.",
                 "id": "COMPILER_DISABLE_GCC8_WARNINGS",
@@ -2643,6 +2623,16 @@
                         "range": null,
                         "title": "No Binary Blobs",
                         "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "ESP32C3 will reset at wake-up if GPIO is received a small electrostatic pulse during\nlight sleep, with specific condition\n\n- GPIO needs to be configured as input-mode only\n- The pin receives a small electrostatic pulse, and reset occurs when the pulse\n  voltage is higher than 6 V\n\nFor GPIO set to input mode only, it is not a good practice to leave it open/floating,\nThe hardware design needs to controlled it with determined supply or ground voltage\nis necessary.\n\nThis option provides a software workaround for this issue. Configure to isolate all\nGPIO pins in sleep state.",
+                        "id": "ESP32C3_LIGHTSLEEP_GPIO_RESET_WORKAROUND",
+                        "name": "ESP32C3_LIGHTSLEEP_GPIO_RESET_WORKAROUND",
+                        "range": null,
+                        "title": "light sleep GPIO reset workaround",
+                        "type": "bool"
                     }
                 ],
                 "depends_on": null,
@@ -2788,16 +2778,6 @@
                                 "name": "ESP_SLEEP_RTC_BUS_ISO_WORKAROUND",
                                 "range": null,
                                 "title": null,
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "esp32c3 and esp32s3 will reset at wake-up if GPIO is received a small electrostatic\npulse during light sleep, with specific condition\n\n- GPIO needs to be configured as input-mode only\n- The pin receives a small electrostatic pulse, and reset occurs when the pulse\n  voltage is higher than 6 V\n\nFor GPIO set to input mode only, it is not a good practice to leave it open/floating,\nThe hardware design needs to controlled it with determined supply or ground voltage\nis necessary.\n\nThis option provides a software workaround for this issue. Configure to isolate all\nGPIO pins in sleep state.",
-                                "id": "ESP_SLEEP_GPIO_RESET_WORKAROUND",
-                                "name": "ESP_SLEEP_GPIO_RESET_WORKAROUND",
-                                "range": null,
-                                "title": "light sleep GPIO reset workaround",
                                 "type": "bool"
                             },
                             {
@@ -3171,36 +3151,6 @@
                         "id": "component-config-esp-system-settings-channel-for-console-output",
                         "name": "ESP_CONSOLE_UART",
                         "title": "Channel for console output",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_CONSOLE_SECONDARY>",
-                                "help": null,
-                                "id": "ESP_CONSOLE_SECONDARY_NONE",
-                                "name": "ESP_CONSOLE_SECONDARY_NONE",
-                                "range": null,
-                                "title": "No secondary console",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "!ESP_CONSOLE_USB_SERIAL_JTAG && <choice ESP_CONSOLE_SECONDARY>",
-                                "help": "This option supports output through USB_SERIAL_JTAG port when the UART0 port is not connected.\nThe output currently only supports non-blocking mode without using the console.\nIf you want to output in blocking mode with REPL or input through USB_SERIAL_JTAG port,\nplease change the primary config to ESP_CONSOLE_USB_SERIAL_JTAG above.",
-                                "id": "ESP_CONSOLE_SECONDARY_USB_SERIAL_JTAG",
-                                "name": "ESP_CONSOLE_SECONDARY_USB_SERIAL_JTAG",
-                                "range": null,
-                                "title": "USB_SERIAL_JTAG PORT",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": "IDF_TARGET_ESP32S3 || IDF_TARGET_ESP32C3",
-                        "help": "This secondary option supports output through other specific port like USB_SERIAL_JTAG\nwhen UART0 port as a primary is selected but not connected. This secondary output currently only supports\nnon-blocking mode without using REPL. If you want to output in blocking mode with REPL or\ninput through this secondary port, please change the primary config to this port\nin `Channel for console output` menu.",
-                        "id": "component-config-esp-system-settings-channel-for-console-secondary-output",
-                        "name": "ESP_CONSOLE_SECONDARY",
-                        "title": "Channel for console secondary output",
                         "type": "choice"
                     },
                     {

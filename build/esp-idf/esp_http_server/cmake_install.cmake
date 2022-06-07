@@ -32,8 +32,3 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "TRUE")
 endif()
 
-# Set default install directory permissions.
-if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/home/razvan/.espressif/tools/riscv32-esp-elf/esp-2021r2-8.4.0/riscv32-esp-elf/bin/riscv32-esp-elf-objdump")
-endif()
-

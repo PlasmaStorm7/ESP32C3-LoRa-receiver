@@ -979,16 +979,6 @@
                 "type": "string"
             },
             {
-                "children": [],
-                "depends_on": "SECURE_BOOT && (IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32S3)",
-                "help": "If this option is set, ROM bootloader will revoke the public key digest burned in efuse block\nif it fails to verify the signature of software bootloader with it.\nRevocation of keys does not happen when enabling secure boot. Once secure boot is enabled,\nkey revocation checks will be done on subsequent boot-up, while verifying the software bootloader\n\nThis feature provides a strong resistance against physical attacks on the device.\n\nNOTE: Once a digest slot is revoked, it can never be used again to verify an image\nThis can lead to permanent bricking of the device, in case all keys are revoked\nbecause of signature verification failure.",
-                "id": "SECURE_BOOT_ENABLE_AGGRESSIVE_KEY_REVOKE",
-                "name": "SECURE_BOOT_ENABLE_AGGRESSIVE_KEY_REVOKE",
-                "range": null,
-                "title": "Enable Aggressive key revoke strategy",
-                "type": "bool"
-            },
-            {
                 "children": [
                     {
                         "children": [],
@@ -1537,7 +1527,7 @@
                 "children": [
                     {
                         "children": [],
-                        "depends_on": "IDF_TARGET_ESP32S3 && ESPTOOLPY_FLASH_SAMPLE_MODE_STR && <choice ESPTOOLPY_FLASHFREQ>",
+                        "depends_on": "ESPTOOLPY_FLASH_SAMPLE_MODE_STR && <choice ESPTOOLPY_FLASHFREQ>",
                         "help": null,
                         "id": "ESPTOOLPY_FLASHFREQ_120M",
                         "name": "ESPTOOLPY_FLASHFREQ_120M",
@@ -2230,16 +2220,6 @@
                 "name": "COMPILER_WARN_WRITE_STRINGS",
                 "range": null,
                 "title": "Enable -Wwrite-strings warning flag",
-                "type": "bool"
-            },
-            {
-                "children": [],
-                "depends_on": "IDF_TARGET_ARCH_RISCV",
-                "help": "Adds -msave-restore to C/C++ compilation flags.\n\nWhen this flag is enabled, compiler will call library functions to\nsave/restore registers in function prologues/epilogues. This results\nin lower overall code size, at the expense of slightly reduced performance.\n\nThis option can be enabled for RISC-V targets only.",
-                "id": "COMPILER_SAVE_RESTORE_LIBCALLS",
-                "name": "COMPILER_SAVE_RESTORE_LIBCALLS",
-                "range": null,
-                "title": "Enable -msave-restore flag to reduce code size",
                 "type": "bool"
             },
             {
@@ -8417,34 +8397,6 @@
                         "id": "component-config-driver-configurations-gpio-configuration",
                         "title": "GPIO Configuration",
                         "type": "menu"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "Place GDMA control functions (like start/stop/append/reset) into IRAM,\nso that these functions can be IRAM-safe and able to be called in the other IRAM interrupt context.\nEnabling this option can improve driver performance as well.",
-                                "id": "GDMA_CTRL_FUNC_IN_IRAM",
-                                "name": "GDMA_CTRL_FUNC_IN_IRAM",
-                                "range": null,
-                                "title": "Place GDMA control functions into IRAM",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": null,
-                                "help": "This will ensure the GDMA interrupt handler is IRAM-Safe, allow to avoid flash\ncache misses, and also be able to run whilst the cache is disabled.\n(e.g. SPI Flash write).",
-                                "id": "GDMA_ISR_IRAM_SAFE",
-                                "name": "GDMA_ISR_IRAM_SAFE",
-                                "range": null,
-                                "title": "GDMA ISR IRAM-Safe",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": null,
-                        "id": "component-config-driver-configurations-gdma-configuration",
-                        "title": "GDMA Configuration",
-                        "type": "menu"
                     }
                 ],
                 "depends_on": null,
@@ -9046,6 +8998,16 @@
                         "name": "ESP32C3_NO_BLOBS",
                         "range": null,
                         "title": "No Binary Blobs",
+                        "type": "bool"
+                    },
+                    {
+                        "children": [],
+                        "depends_on": null,
+                        "help": "ESP32C3 will reset at wake-up if GPIO is received a small electrostatic pulse during\nlight sleep, with specific condition\n\n- GPIO needs to be configured as input-mode only\n- The pin receives a small electrostatic pulse, and reset occurs when the pulse\n  voltage is higher than 6 V\n\nFor GPIO set to input mode only, it is not a good practice to leave it open/floating,\nThe hardware design needs to controlled it with determined supply or ground voltage\nis necessary.\n\nThis option provides a software workaround for this issue. Configure to isolate all\nGPIO pins in sleep state.",
+                        "id": "ESP32C3_LIGHTSLEEP_GPIO_RESET_WORKAROUND",
+                        "name": "ESP32C3_LIGHTSLEEP_GPIO_RESET_WORKAROUND",
+                        "range": null,
+                        "title": "light sleep GPIO reset workaround",
                         "type": "bool"
                     }
                 ],
@@ -9678,16 +9640,6 @@
                             },
                             {
                                 "children": [],
-                                "depends_on": null,
-                                "help": "esp32c3 and esp32s3 will reset at wake-up if GPIO is received a small electrostatic\npulse during light sleep, with specific condition\n\n- GPIO needs to be configured as input-mode only\n- The pin receives a small electrostatic pulse, and reset occurs when the pulse\n  voltage is higher than 6 V\n\nFor GPIO set to input mode only, it is not a good practice to leave it open/floating,\nThe hardware design needs to controlled it with determined supply or ground voltage\nis necessary.\n\nThis option provides a software workaround for this issue. Configure to isolate all\nGPIO pins in sleep state.",
-                                "id": "ESP_SLEEP_GPIO_RESET_WORKAROUND",
-                                "name": "ESP_SLEEP_GPIO_RESET_WORKAROUND",
-                                "range": null,
-                                "title": "light sleep GPIO reset workaround",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
                                 "depends_on": "SPIRAM",
                                 "help": "When the CS pin of SPIRAM is not pulled up, the sleep current will\nincrease during light sleep. If the CS pin of SPIRAM has an external\npull-up, you do not need to select this option, otherwise, you\nshould enable this option.",
                                 "id": "ESP_SLEEP_PSRAM_LEAKAGE_WORKAROUND",
@@ -9723,7 +9675,7 @@
                     {
                         "children": [],
                         "depends_on": null,
-                        "help": "Configure the IPC tasks stack size. An IPC task runs on each core (in dual core mode), and allows for\ncross-core function calls. See IPC documentation for more details. The default IPC stack size should be\nenough for most common simple use cases. However, users can increase/decrease the stack size to their\nneeds.",
+                        "help": "Configure the IPC tasks stack size. One IPC task runs on each core\n(in dual core mode), and allows for cross-core function calls.\n\nSee IPC documentation for more details.\n\nThe default stack size should be enough for most common use cases.\nIt can be shrunk if you are sure that you do not use any custom\nIPC functionality.",
                         "id": "ESP_IPC_TASK_STACK_SIZE",
                         "name": "ESP_IPC_TASK_STACK_SIZE",
                         "range": [
@@ -9736,7 +9688,7 @@
                     {
                         "children": [],
                         "depends_on": "!FREERTOS_UNICORE",
-                        "help": "If this option is not enabled then the IPC task will keep behavior same as prior to that of ESP-IDF v4.0,\nhence IPC task will run at (configMAX_PRIORITIES - 1) priority.",
+                        "help": "If this option is not enabled then the IPC task will keep behavior\nsame as prior to that of ESP-IDF v4.0, and hence IPC task will run\nat (configMAX_PRIORITIES - 1) priority.",
                         "id": "ESP_IPC_USES_CALLERS_PRIORITY",
                         "name": "ESP_IPC_USES_CALLERS_PRIORITY",
                         "range": null,
@@ -9746,7 +9698,7 @@
                     {
                         "children": [],
                         "depends_on": null,
-                        "help": "The IPC ISR feature is similar to the IPC feature except that the callback function is executed in the\ncontext of a High Priority Interrupt. The IPC ISR feature is itended for low latency execution of simple\ncallbacks written in assembly on another CPU. Due to being run in a High Priority Interrupt, the assembly\ncallbacks must be written with particular restrictions (see \"IPC\" and \"High-Level Interrupt\" docs for more\ndetails).",
+                        "help": "This feature servers a similar purpose to the IPC except that the callback function is run\nin the context of a level 4 interrupt (i.e., high priority/level interrupt). The IPC ISR\nfeature is intended for low latency execution of simple functions written in assembly on\nanother CPU. Due to being run in higher level interrupt context, the assembly functions\nshould be written in a particular way (see esp_test_ipc_isr_asm() and the \"High-Level Interrupts\"\nchapter in hlinterrupts.rst for more details).",
                         "id": "ESP_IPC_ISR_ENABLE",
                         "name": "ESP_IPC_ISR_ENABLE",
                         "range": null,
@@ -9852,8 +9804,8 @@
                         "children": [],
                         "depends_on": null,
                         "help": "If this option is enabled, NVS will be initialized and calibration data will be loaded from there.\nPHY calibration will be skipped on deep sleep wakeup. If calibration data is not found, full calibration\nwill be performed and stored in NVS. Normally, only partial calibration will be performed.\nIf this option is disabled, full calibration will be performed.\n\nIf it's easy that your board calibrate bad data, choose 'n'.\nTwo cases for example, you should choose 'n':\n1.If your board is easy to be booted up with antenna disconnected.\n2.Because of your board design, each time when you do calibration, the result are too unstable.\nIf unsure, choose 'y'.",
-                        "id": "ESP_PHY_CALIBRATION_AND_DATA_STORAGE",
-                        "name": "ESP_PHY_CALIBRATION_AND_DATA_STORAGE",
+                        "id": "ESP32_PHY_CALIBRATION_AND_DATA_STORAGE",
+                        "name": "ESP32_PHY_CALIBRATION_AND_DATA_STORAGE",
                         "range": null,
                         "title": "Store phy calibration data in NVS",
                         "type": "bool"
@@ -9862,10 +9814,10 @@
                         "children": [
                             {
                                 "children": [],
-                                "depends_on": "ESP_PHY_INIT_DATA_IN_PARTITION",
+                                "depends_on": "ESP32_PHY_INIT_DATA_IN_PARTITION",
                                 "help": "If enabled, PHY init data will be restored to default if\nit cannot be verified successfully to avoid endless bootloops.\n\nIf unsure, choose 'n'.",
-                                "id": "ESP_PHY_DEFAULT_INIT_IF_INVALID",
-                                "name": "ESP_PHY_DEFAULT_INIT_IF_INVALID",
+                                "id": "ESP32_PHY_DEFAULT_INIT_IF_INVALID",
+                                "name": "ESP32_PHY_DEFAULT_INIT_IF_INVALID",
                                 "range": null,
                                 "title": "Reset default PHY init data if invalid",
                                 "type": "bool"
@@ -9874,29 +9826,19 @@
                                 "children": [
                                     {
                                         "children": [],
-                                        "depends_on": "ESP_PHY_MULTIPLE_INIT_DATA_BIN && ESP_PHY_INIT_DATA_IN_PARTITION",
-                                        "help": "If enabled, multiple phy init data bin will embedded into app bin\nIf not enabled, multiple phy init data bin will still leave alone, and need to be flashed by users.",
-                                        "id": "ESP_PHY_MULTIPLE_INIT_DATA_BIN_EMBED",
-                                        "name": "ESP_PHY_MULTIPLE_INIT_DATA_BIN_EMBED",
-                                        "range": null,
-                                        "title": "Support embedded multiple phy init data bin to app bin",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "children": [],
-                                        "depends_on": "ESP_PHY_MULTIPLE_INIT_DATA_BIN && ESP_PHY_INIT_DATA_IN_PARTITION",
+                                        "depends_on": "ESP32_SUPPORT_MULTIPLE_PHY_INIT_DATA_BIN && ESP32_PHY_INIT_DATA_IN_PARTITION",
                                         "help": "If enabled, when an error occurs while the PHY init data is updated,\nthe program will terminate and restart.\nIf not enabled, the PHY init data will not be updated when an error occurs.",
-                                        "id": "ESP_PHY_INIT_DATA_ERROR",
-                                        "name": "ESP_PHY_INIT_DATA_ERROR",
+                                        "id": "ESP32_PHY_INIT_DATA_ERROR",
+                                        "name": "ESP32_PHY_INIT_DATA_ERROR",
                                         "range": null,
                                         "title": "Terminate operation when PHY init data error",
                                         "type": "bool"
                                     }
                                 ],
-                                "depends_on": "ESP_PHY_INIT_DATA_IN_PARTITION && ESP_PHY_INIT_DATA_IN_PARTITION",
+                                "depends_on": "ESP32_PHY_INIT_DATA_IN_PARTITION && ESP32_PHY_INIT_DATA_IN_PARTITION",
                                 "help": "If enabled, the corresponding PHY init data type can be automatically switched\naccording to the country code. China's PHY init data bin is used by default.\nCan be modified by country information in API esp_wifi_set_country().\nThe priority of switching the PHY init data type is:\n1. Country configured by API esp_wifi_set_country()\nand the parameter policy is WIFI_COUNTRY_POLICY_MANUAL.\n2. Country notified by the connected AP.\n3. Country configured by API esp_wifi_set_country()\nand the parameter policy is WIFI_COUNTRY_POLICY_AUTO.",
-                                "id": "ESP_PHY_MULTIPLE_INIT_DATA_BIN",
-                                "name": "ESP_PHY_MULTIPLE_INIT_DATA_BIN",
+                                "id": "ESP32_SUPPORT_MULTIPLE_PHY_INIT_DATA_BIN",
+                                "name": "ESP32_SUPPORT_MULTIPLE_PHY_INIT_DATA_BIN",
                                 "range": null,
                                 "title": "Support multiple PHY init data bin",
                                 "type": "bool"
@@ -9904,9 +9846,9 @@
                         ],
                         "depends_on": null,
                         "help": "If enabled, PHY init data will be loaded from a partition.\nWhen using a custom partition table, make sure that PHY data\npartition is included (type: 'data', subtype: 'phy').\nWith default partition tables, this is done automatically.\nIf PHY init data is stored in a partition, it has to be flashed there,\notherwise runtime error will occur.\n\nIf this option is not enabled, PHY init data will be embedded\ninto the application binary.\n\nIf unsure, choose 'n'.",
-                        "id": "ESP_PHY_INIT_DATA_IN_PARTITION",
+                        "id": "ESP32_PHY_INIT_DATA_IN_PARTITION",
                         "is_menuconfig": true,
-                        "name": "ESP_PHY_INIT_DATA_IN_PARTITION",
+                        "name": "ESP32_PHY_INIT_DATA_IN_PARTITION",
                         "range": null,
                         "title": "Use a partition to store PHY init data",
                         "type": "menu"
@@ -9915,8 +9857,8 @@
                         "children": [],
                         "depends_on": null,
                         "help": "Set maximum transmit power for WiFi radio. Actual transmit power for high\ndata rates may be lower than this setting.",
-                        "id": "ESP_PHY_MAX_WIFI_TX_POWER",
-                        "name": "ESP_PHY_MAX_WIFI_TX_POWER",
+                        "id": "ESP32_PHY_MAX_WIFI_TX_POWER",
+                        "name": "ESP32_PHY_MAX_WIFI_TX_POWER",
                         "range": [
                             10,
                             20
@@ -9928,8 +9870,8 @@
                         "children": [],
                         "depends_on": null,
                         "help": null,
-                        "id": "ESP_PHY_MAX_TX_POWER",
-                        "name": "ESP_PHY_MAX_TX_POWER",
+                        "id": "ESP32_PHY_MAX_TX_POWER",
+                        "name": "ESP32_PHY_MAX_TX_POWER",
                         "range": null,
                         "title": null,
                         "type": "int"
@@ -9938,8 +9880,8 @@
                         "children": [],
                         "depends_on": "(IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32S3) && FREERTOS_USE_TICKLESS_IDLE",
                         "help": "If enabled, the MAC and baseband of Wi-Fi and Bluetooth will be powered\ndown when PHY is disabled. Enabling this setting reduces power consumption\nby a small amount but increases RAM use by approximately 4 KB(Wi-Fi only),\n2 KB(Bluetooth only) or 5.3 KB(Wi-Fi + Bluetooth).",
-                        "id": "ESP_PHY_MAC_BB_PD",
-                        "name": "ESP_PHY_MAC_BB_PD",
+                        "id": "ESP32_PHY_MAC_BB_PD",
+                        "name": "ESP32_PHY_MAC_BB_PD",
                         "range": null,
                         "title": "Power down MAC and baseband of Wi-Fi and Bluetooth when PHY is disabled",
                         "type": "bool"
@@ -9948,20 +9890,10 @@
                         "children": [],
                         "depends_on": "ESP32_BROWNOUT_DET",
                         "help": "When brownout reset occurs, reduce PHY TX power to keep the code running.",
-                        "id": "ESP_PHY_REDUCE_TX_POWER",
-                        "name": "ESP_PHY_REDUCE_TX_POWER",
+                        "id": "ESP32_REDUCE_PHY_TX_POWER",
+                        "name": "ESP32_REDUCE_PHY_TX_POWER",
                         "range": null,
                         "title": "Reduce PHY TX power when brownout reset",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "USB_OTG_SUPPORTED || ESP_CONSOLE_USB_SERIAL_JTAG",
-                        "help": "When using USB Serial/JTAG/OTG/CDC, PHY should enable USB, otherwise USB module\ncan not work properly.",
-                        "id": "ESP_PHY_ENABLE_USB",
-                        "name": "ESP_PHY_ENABLE_USB",
-                        "range": null,
-                        "title": "Enable USB when phy init",
                         "type": "bool"
                     }
                 ],
@@ -10082,16 +10014,6 @@
                         "name": "PM_POWER_DOWN_CPU_IN_LIGHT_SLEEP",
                         "range": null,
                         "title": "Power down CPU in light sleep",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": null,
-                        "id": "PM_UPDATE_CCOMPARE_HLI_WORKAROUND",
-                        "name": "PM_UPDATE_CCOMPARE_HLI_WORKAROUND",
-                        "range": null,
-                        "title": null,
                         "type": "bool"
                     }
                 ],
@@ -10439,36 +10361,6 @@
                         "id": "component-config-esp-system-settings-channel-for-console-output",
                         "name": "ESP_CONSOLE_UART",
                         "title": "Channel for console output",
-                        "type": "choice"
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [],
-                                "depends_on": "<choice ESP_CONSOLE_SECONDARY>",
-                                "help": null,
-                                "id": "ESP_CONSOLE_SECONDARY_NONE",
-                                "name": "ESP_CONSOLE_SECONDARY_NONE",
-                                "range": null,
-                                "title": "No secondary console",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "!ESP_CONSOLE_USB_SERIAL_JTAG && <choice ESP_CONSOLE_SECONDARY>",
-                                "help": "This option supports output through USB_SERIAL_JTAG port when the UART0 port is not connected.\nThe output currently only supports non-blocking mode without using the console.\nIf you want to output in blocking mode with REPL or input through USB_SERIAL_JTAG port,\nplease change the primary config to ESP_CONSOLE_USB_SERIAL_JTAG above.",
-                                "id": "ESP_CONSOLE_SECONDARY_USB_SERIAL_JTAG",
-                                "name": "ESP_CONSOLE_SECONDARY_USB_SERIAL_JTAG",
-                                "range": null,
-                                "title": "USB_SERIAL_JTAG PORT",
-                                "type": "bool"
-                            }
-                        ],
-                        "depends_on": "IDF_TARGET_ESP32S3 || IDF_TARGET_ESP32C3",
-                        "help": "This secondary option supports output through other specific port like USB_SERIAL_JTAG\nwhen UART0 port as a primary is selected but not connected. This secondary output currently only supports\nnon-blocking mode without using REPL. If you want to output in blocking mode with REPL or\ninput through this secondary port, please change the primary config to this port\nin `Channel for console output` menu.",
-                        "id": "component-config-esp-system-settings-channel-for-console-secondary-output",
-                        "name": "ESP_CONSOLE_SECONDARY",
-                        "title": "Channel for console secondary output",
                         "type": "choice"
                     },
                     {
@@ -11248,36 +11140,6 @@
                         "name": "ESP_WIFI_EXTERNAL_COEXIST_ENABLE",
                         "range": null,
                         "title": "WiFi External Coexistence",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "IDF_TARGET_ESP32C3 || IDF_TARGET_ESP32S3",
-                        "help": "Select this option to enable GCMP support. GCMP support is compulsory for WiFi Suite-B support.",
-                        "id": "ESP_WIFI_GCMP_SUPPORT",
-                        "name": "ESP_WIFI_GCMP_SUPPORT",
-                        "range": null,
-                        "title": "WiFi GCMP Support(GCMP128 and GCMP256)",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Select this option to enable GMAC support. GMAC support is compulsory for WiFi 192 bit certification.",
-                        "id": "ESP_WIFI_GMAC_SUPPORT",
-                        "name": "ESP_WIFI_GMAC_SUPPORT",
-                        "range": null,
-                        "title": "WiFi GMAC Support(GMAC128 and GMAC256)",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "WiFi module can be compiled without SoftAP to save code size.",
-                        "id": "ESP_WIFI_SOFTAP_SUPPORT",
-                        "name": "ESP_WIFI_SOFTAP_SUPPORT",
-                        "range": null,
-                        "title": "WiFi SoftAP Support",
                         "type": "bool"
                     }
                 ],
@@ -13174,16 +13036,6 @@
                                 "children": [],
                                 "depends_on": "<choice LMIC_SPI>",
                                 "help": null,
-                                "id": "LMIC_SPI_SPI2",
-                                "name": "LMIC_SPI_SPI2",
-                                "range": null,
-                                "title": "SPI2",
-                                "type": "bool"
-                            },
-                            {
-                                "children": [],
-                                "depends_on": "<choice LMIC_SPI>",
-                                "help": null,
                                 "id": "LMIC_SPI_HSPI",
                                 "name": "LMIC_SPI_HSPI",
                                 "range": null,
@@ -13198,6 +13050,16 @@
                                 "name": "LMIC_SPI_VSPI",
                                 "range": null,
                                 "title": "VSPI",
+                                "type": "bool"
+                            },
+                            {
+                                "children": [],
+                                "depends_on": "<choice LMIC_SPI>",
+                                "help": null,
+                                "id": "LMIC_SPI_SPI2",
+                                "name": "LMIC_SPI_SPI2",
+                                "range": null,
+                                "title": "SPI2",
                                 "type": "bool"
                             }
                         ],
@@ -13835,16 +13697,6 @@
                         "name": "LWIP_DHCP_DISABLE_CLIENT_ID",
                         "range": null,
                         "title": "DHCP: Disable Use of HW address as client identification",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "This option could be used to disable DHCP client vendor class identification.\nSet this option to \"y\" in order to exclude option 60 from DHCP packets.",
-                        "id": "LWIP_DHCP_DISABLE_VENDOR_CLASS_ID",
-                        "name": "LWIP_DHCP_DISABLE_VENDOR_CLASS_ID",
-                        "range": null,
-                        "title": "DHCP: Disable Use of vendor class identification",
                         "type": "bool"
                     },
                     {
@@ -15158,11 +15010,11 @@
                                     {
                                         "children": [],
                                         "depends_on": "MBEDTLS_DYNAMIC_FREE_CONFIG_DATA",
-                                        "help": "Free CA certificate after its usage in the handshake process.\nThis option will decrease the heap footprint for the TLS handshake, but may lead to a problem:\nIf the respective ssl object needs to perform the TLS handshake again,\nthe CA certificate should once again be registered to the ssl object.",
+                                        "help": "Free ca certificate after its usage in the handshake process.\nThis option will decrease the heap footprint for the TLS handshake, but may lead to a problem:\nIf the respective ssl object needs to perform the TLS handshake again,\nthe ca certificate should once again be registered to the ssl object.",
                                         "id": "MBEDTLS_DYNAMIC_FREE_CA_CERT",
                                         "name": "MBEDTLS_DYNAMIC_FREE_CA_CERT",
                                         "range": null,
-                                        "title": "Free SSL CA certificate after its usage",
+                                        "title": "Free SSL ca certificate after its usage",
                                         "type": "bool"
                                     }
                                 ],
@@ -15175,7 +15027,7 @@
                                 "type": "bool"
                             }
                         ],
-                        "depends_on": "!MBEDTLS_SSL_PROTO_DTLS",
+                        "depends_on": null,
                         "help": "Using dynamic TX/RX buffer. After enabling this option, mbedTLS will\nallocate TX buffer when need to send data and then free it if all data\nis sent, allocate RX buffer when need to receive data and then free it\nwhen all data is used or read by upper layer.\n\nBy default, when SSL is initialized, mbedTLS also allocate TX and\nRX buffer with the default value of \"MBEDTLS_SSL_OUT_CONTENT_LEN\" or\n\"MBEDTLS_SSL_IN_CONTENT_LEN\", so to save more heap, users can set\nthe options to be an appropriate value.",
                         "id": "MBEDTLS_DYNAMIC_BUFFER",
                         "name": "MBEDTLS_DYNAMIC_BUFFER",
@@ -15388,7 +15240,7 @@
                     {
                         "children": [],
                         "depends_on": "!SPIRAM_CACHE_WORKAROUND_STRATEGY_DUPLDST",
-                        "help": "Enable hardware accelerated multiple precision integer operations.\n\nHardware accelerated multiplication, modulo multiplication,\nand modular exponentiation for up to SOC_RSA_MAX_BIT_LEN bit results.\n\nThese operations are used by RSA.",
+                        "help": "Enable hardware accelerated multiple precision integer operations.\n\nHardware accelerated multiplication, modulo multiplication,\nand modular exponentiation for up to 4096 bit results.\n\nThese operations are used by RSA.",
                         "id": "MBEDTLS_HARDWARE_MPI",
                         "name": "MBEDTLS_HARDWARE_MPI",
                         "range": null,
@@ -16774,16 +16626,6 @@
                         "name": "NVS_ENCRYPTION",
                         "range": null,
                         "title": "Enable NVS encryption",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": "SECURE_FLASH_ENC_ENABLED",
-                        "help": "Enabling this will ignore \"encrypted\" flag for NVS partitions. NVS encryption\nscheme is different than hardware flash encryption and hence it is not recommended\nto have \"encrypted\" flag for NVS partitions. This was not being checked in pre v4.3\nIDF. Hence, if you have any devices where this flag is kept enabled in partition\ntable then enabling this config will allow to have same behavior as pre v4.3 IDF.",
-                        "id": "NVS_COMPATIBLE_PRE_V4_3_ENCRYPTION_FLAG",
-                        "name": "NVS_COMPATIBLE_PRE_V4_3_ENCRYPTION_FLAG",
-                        "range": null,
-                        "title": "NVS partition encrypted flag compatible with ESP-IDF before v4.3",
                         "type": "bool"
                     }
                 ],
@@ -18385,16 +18227,6 @@
                         "name": "WPA_WAPI_PSK",
                         "range": null,
                         "title": "Enable WAPI PSK support",
-                        "type": "bool"
-                    },
-                    {
-                        "children": [],
-                        "depends_on": null,
-                        "help": "Select this option to enable 192 bit NSA suite-B.\nThis is necessary to support WPA3 192 bit security.",
-                        "id": "WPA_SUITE_B_192",
-                        "name": "WPA_SUITE_B_192",
-                        "range": null,
-                        "title": "Enable NSA suite B support with 192 bit key",
                         "type": "bool"
                     },
                     {
