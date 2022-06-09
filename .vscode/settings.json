@@ -12,6 +12,7 @@
     "idf.toolsPath": "/home/razvan/.espressif",
     "idf.flashType": "UART",
     "files.associations": {
-        "*.ipp": "c"
+        "*.ipp": "c",
+        "lora.h": "c"
     }
 }

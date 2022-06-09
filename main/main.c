@@ -104,9 +104,9 @@ void task_rx(void *p)
             break;
          }
          msgReady=true;
-         buf[x] = 0;//string terminator
-         //printf("Received: \"%s\" with %.2f SNR and %d RSSI\n", buf,lora_packet_snr(),lora_packet_rssi());
-         //printf("Received: \"%s\" \n",buf);
+         buf[x+1] = 0;//string terminator
+         printf("Received: \"%s\" with %.2f SNR and %d RSSI\n", buf+1,lora_packet_snr(),lora_packet_rssi());
+         //printf("Received: \"%s\" \n",buf+1);
          lora_receive();
       }
       vTaskDelay(10);
