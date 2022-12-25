@@ -3,10 +3,12 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
-#include "driver/spi_master.h"
-#include "soc/gpio_struct.h"
-#include "driver/gpio.h"
+#include "spi_master.h"
+#include "gpio.h"
 #include "lora.h"
+#include "soc/gpio_struct.h"
+
+
 
 #define PMODCLS_CS_PIN 9
 uint8_t buf[50]={"salut\0"};
@@ -121,7 +123,7 @@ void app_main()
    lora_enable_crc();
    lora_receive();
    xTaskCreate(&task_rx, "task_rx", 2048, NULL, 5, NULL);
-   xTaskCreate(&task_displayMsg,"task_displayMsg",2048,NULL,6,NULL);
+   //xTaskCreate(&task_displayMsg,"task_displayMsg",2048,NULL,6,NULL);
 }
 
 
