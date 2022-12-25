@@ -3,8 +3,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
-#include "spi_master.h"
-#include "gpio.h"
+#include "driver/spi_master.h"
+#include "driver/gpio.h"
 #include "lora.h"
 #include "soc/gpio_struct.h"
 
@@ -119,6 +119,7 @@ void task_rx(void *p)
 void app_main()
 {
    lora_init();
+   lora_set_bandwidth(125E3);
    lora_set_frequency(8683e5);//868.3Mhz, bandwidth 125Khz ,banda libera up to 1% duty cycle
    lora_enable_crc();
    lora_receive();
